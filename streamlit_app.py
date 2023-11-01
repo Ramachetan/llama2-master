@@ -13,7 +13,7 @@ if not os.path.exists(CSV_PATH):
         writer.writerow(['Conversation Unique ID', 'Entire Conversation', 'Feedback'])
 
 # App title
-st.set_page_config(page_title="🦙💬 Llama 2 Chatbot")
+st.set_page_config(page_title="GenContentHUB")
 
 # Function to clear chat history
 def clear_chat_history():
@@ -36,8 +36,8 @@ with st.sidebar:
 
     st.subheader('Response Settings')
     system_message = st.sidebar.radio('Tone of chat', ['Friendly', 'Formal', 'Casual', 'Assertive', 'Sarcastic'], index=0, key='response_type')
-    
-     # If the previous selection is stored and it's different from the current selection
+
+    # If the previous selection is stored and it's different from the current selection
     if "previous_selection" in st.session_state and st.session_state.previous_selection != system_message:
         clear_chat_history()
 
@@ -70,7 +70,8 @@ with st.sidebar:
             writer = csv.writer(file)
             writer.writerow([st.session_state.conversation_id, entire_conversation, feedback_option])
         
-        st.sidebar.success("Feedback saved successfully!")
+        st.sidebar.success("Feedback recorded!", icon="📝")
+        st.toast("Feedback recorded!", icon="📝")
         # Generate a new unique ID for the next conversation
         st.session_state.conversation_id = str(uuid.uuid4())
 
@@ -153,7 +154,7 @@ if prompt := st.chat_input(disabled=not replicate_api):
 # Generate a new response if last message is not from assistant
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
+        with st.spinner("Generating response..."):
             response = generate_llama2_response(prompt)
             placeholder = st.empty()
             full_response = ''
