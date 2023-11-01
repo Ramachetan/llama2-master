@@ -34,10 +34,6 @@ with st.sidebar:
     # Store the current selection for the next run
     st.session_state.previous_selection = system_message
     
-    num_responses = st.sidebar.number_input('Number of responses', min_value=1, max_value=10, value=1)
-    generate_button = st.sidebar.button('Generate Responses')
-
-    
     st.subheader('Models and parameters')
     selected_model = st.sidebar.selectbox('Choose a Llama2 model', ['Llama2-7B', 'Llama2-13B'], key='selected_model')
     if selected_model == 'Llama2-7B':
@@ -64,7 +60,7 @@ st.sidebar.button('Clear Chat History', on_click=clear_chat_history)
 
 
 # Function for generating LLaMA2 response. Refactored from https://github.com/a16z-infra/llama2-chatbot
-def generate_llama2_response(prompt_input, num_responses=1):
+def generate_llama2_response(prompt_input):
     string_dialogue = "You are an AI assistant designed to create slogans. Listen carefully to user inputs and ensure you tailor your response based on their requirements before generating a slogan.\n\n"
     
     if system_message == "Friendly":
@@ -94,13 +90,9 @@ def generate_llama2_response(prompt_input, num_responses=1):
         else:
             string_dialogue += "Assistant: " + dict_message["content"] + "\n\n"
     
-    outputs = []
-    for _ in range(num_responses):
-        output = replicate.run('a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5', 
+    output = replicate.run('a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5', 
                            input={"prompt": f"{string_dialogue} {prompt_input} Assistant: ",
                                   "temperature":temperature, "top_p":top_p, "max_length":max_length, "repetition_penalty":1})
-        print(output)
-        outputs.append(output[0])
     return output
 
 
@@ -111,12 +103,15 @@ if prompt := st.chat_input(disabled=not replicate_api):
         st.write(prompt)
 
 # Generate a new response if last message is not from assistant
-if generate_button and st.session_state.messages[-1]["role"] != "assistant":
-    with st.spinner("Thinking..."):
-        responses = generate_llama2_response(prompt, num_responses)
-        for idx, response in enumerate(responses):
-            with st.chat_message("assistant"):
-                placeholder = st.empty()
-                placeholder.markdown(f"Response {idx + 1}: {response}")
-                message = {"role": "assistant", "content": f"Response {idx + 1}: {response}"}
-                st.session_state.messages.append(message)
+if st.session_state.messages[-1]["role"] != "assistant":
+    with st.chat_message("assistant"):
+        with st.spinner("Thinking..."):
+            response = generate_llama2_response(prompt)
+            placeholder = st.empty()
+            full_response = ''
+            for item in response:
+                full_response += item
+                placeholder.markdown(full_response)
+            placeholder.markdown(full_response)
+    message = {"role": "assistant", "content": full_response}
+    st.session_state.messages.append(message)
