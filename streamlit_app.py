@@ -13,16 +13,18 @@ if not os.path.exists(CSV_PATH):
         writer.writerow(['Conversation Unique ID', 'Entire Conversation', 'Feedback'])
 
 # App title
-st.set_page_config(page_title="GenContentHUB")
+st.set_page_config(page_title="Slogan Generator")
 
-# Function to clear chat history
+# Clear chat history and generate a new ID for the conversation
 def clear_chat_history():
-    st.session_state.messages = [{"role": "assistant", "content": "I want a slogan for..."}]
+    st.session_state.messages = [{"role": "assistant", "content": "Hello! To get started, tell me what you need a slogan for."}]
+    st.session_state.conversation_id = str(uuid.uuid4())
+
 
 # Replicate Credentials
 with st.sidebar:
-    st.title('GenContentHUB')
-    st.write('Use this chatbot to create memorable, catchy slogans that capture the essence of your brand and leave a lasting impression.')
+    st.title('Slogan Generator')
+    st.write('Welcome to our Slogan Generator! This chatbot helps you craft memorable, catchy slogans that resonate with your brand’s essence and leave a lasting impression on your audience.')
     if 'REPLICATE_API_TOKEN' in st.secrets:
         # st.success('API key already provided!', icon='✅')
         replicate_api = st.secrets['REPLICATE_API_TOKEN']
@@ -56,7 +58,7 @@ with st.sidebar:
     
     # Feedback mechanism in the sidebar
     st.sidebar.header("Feedback")
-    st.sidebar.write("Are the responses helpful?")
+    st.sidebar.write("Was the generated slogan helpful?")
     col1, col2= st.columns(2)
     thumbs_up = col1.button("👍 Yes")
     thumbs_down = col2.button("👎 No")
@@ -91,7 +93,7 @@ with st.sidebar:
 
 # Store LLM generated responses
 if "messages" not in st.session_state.keys():
-    st.session_state.messages = [{"role": "assistant", "content": "I want a slogan for..."}]
+    st.session_state.messages = [{"role": "assistant", "content": "Hello! To get started, tell me what you need a slogan for."}]
 
 # Generate a unique ID when the conversation starts
 if "conversation_id" not in st.session_state:
@@ -102,10 +104,6 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.write(message["content"])
 
-# Clear chat history and generate a new ID for the conversation
-def clear_chat_history():
-    st.session_state.messages = [{"role": "assistant", "content": "I want a slogan for..."}]
-    st.session_state.conversation_id = str(uuid.uuid4())
 
 
 # Function for generating LLaMA2 response. Refactored from https://github.com/a16z-infra/llama2-chatbot
