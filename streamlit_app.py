@@ -17,12 +17,12 @@ st.set_page_config(page_title="🦙💬 Llama 2 Chatbot")
 
 # Function to clear chat history
 def clear_chat_history():
-    st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
+    st.session_state.messages = [{"role": "assistant", "content": "I want a slogan for..."}]
 
 # Replicate Credentials
 with st.sidebar:
     st.title('GenContentHUB')
-    st.write('This chatbot is created using the open-source Llama 2 LLM model from Meta.')
+    st.write('Use this chatbot to create memorable, catchy slogans that capture the essence of your brand and leave a lasting impression.')
     if 'REPLICATE_API_TOKEN' in st.secrets:
         # st.success('API key already provided!', icon='✅')
         replicate_api = st.secrets['REPLICATE_API_TOKEN']
@@ -90,7 +90,7 @@ with st.sidebar:
 
 # Store LLM generated responses
 if "messages" not in st.session_state.keys():
-    st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today with?"}]
+    st.session_state.messages = [{"role": "assistant", "content": "I want a slogan for..."}]
 
 # Generate a unique ID when the conversation starts
 if "conversation_id" not in st.session_state:
@@ -103,7 +103,7 @@ for message in st.session_state.messages:
 
 # Clear chat history and generate a new ID for the conversation
 def clear_chat_history():
-    st.session_state.messages = [{"role": "assistant", "content": "How may I assist you today?"}]
+    st.session_state.messages = [{"role": "assistant", "content": "I want a slogan for..."}]
     st.session_state.conversation_id = str(uuid.uuid4())
 
 
