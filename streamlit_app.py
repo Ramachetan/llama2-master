@@ -86,6 +86,7 @@ with st.sidebar:
     #temperature = st.sidebar.slider('creativity', min_value=0.01, max_value=5.0, value=0.1, step=0.01)
     st.sidebar.subheader('Creativity Level')
     col1, col2, col3 = st.columns(3)
+    temperature = 0.01
     if col1.button('Precise'):
         temperature = 0.01
     if col2.button('Balanced'):
