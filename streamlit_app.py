@@ -76,8 +76,6 @@ with st.sidebar:
         st.toast("Feedback recorded!", icon="📝")
         # Generate a new unique ID for the next conversation
         st.session_state.conversation_id = str(uuid.uuid4())
-
-
         
     st.subheader('Models and parameters')
     selected_model = st.sidebar.selectbox('Choose a Llama2 model', ['Llama2-7B', 'Llama2-13B'], key='selected_model')
@@ -85,13 +83,22 @@ with st.sidebar:
         llm = 'a16z-infra/llama7b-v2-chat:4f0a4744c7295c024a1de15e1a63c880d3da035fa1f49bfd344fe076074c8eea'
     elif selected_model == 'Llama2-13B':
         llm = 'a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5'
-    temperature = st.sidebar.slider('temperature', min_value=0.01, max_value=5.0, value=0.1, step=0.01)
-    top_p = st.sidebar.slider('top_p', min_value=0.01, max_value=1.0, value=0.9, step=0.01)
-    max_length = st.sidebar.slider('max_length', min_value=32, max_value=1024, value=1024, step=8)
+    #temperature = st.sidebar.slider('creativity', min_value=0.01, max_value=5.0, value=0.1, step=0.01)
+    st.sidebar.subheader('Creativity Level')
+    col1, col2, col3 = st.columns(3)
+    if col1.button('Precise'):
+        temperature = 0.01
+    if col2.button('Balanced'):
+         temperature = 2.5
+    if col3.button('Creative'):
+         temperature = 5.0
     
+    
+    
+    st.sidebar.subheader('Clear chat history')
     st.button("Clear chat history", on_click=clear_chat_history)
 with st.sidebar:
-    st.subheader("Credit System")
+    st.subheader("Payment")
     st.write("Click the button below to add credits to your account:")
     if st.button("Add Credits"):
         st.write('[![Add Credits](https://img.icons8.com/color/48/000000/add-shopping-cart.png)](https://payge.io/bill/clogff7gx003708l3bmhnm6ld)')
@@ -144,7 +151,7 @@ def generate_llama2_response(prompt_input):
     
     output = replicate.run('a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5', 
                            input={"prompt": f"{string_dialogue} {prompt_input}",
-                                  "temperature":temperature, "top_p":top_p, "max_length":max_length, "repetition_penalty":1})
+                                  "temperature":temperature, "top_p":0.01, "max_length":1024, "repetition_penalty":1})
     return output
 
 
