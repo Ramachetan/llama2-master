@@ -90,6 +90,11 @@ with st.sidebar:
     max_length = st.sidebar.slider('max_length', min_value=32, max_value=1024, value=1024, step=8)
     
     st.button("Clear chat history", on_click=clear_chat_history)
+with st.sidebar:
+    st.subheader("Credit System")
+    st.write("Click the button below to add credits to your account:")
+    if st.button("Add Credits"):
+        st.write('[![Add Credits](https://img.icons8.com/color/48/000000/add-shopping-cart.png)](https://payge.io/bill/clogff7gx003708l3bmhnm6ld)')
 
 # Store LLM generated responses
 if "messages" not in st.session_state.keys():
@@ -138,7 +143,7 @@ def generate_llama2_response(prompt_input):
             string_dialogue += "Assistant: " + dict_message["content"] + "\n\n"
     
     output = replicate.run('a16z-infra/llama13b-v2-chat:df7690f1994d94e96ad9d568eac121aecf50684a0b0963b25a41cc40061269e5', 
-                           input={"prompt": f"{string_dialogue} {prompt_input} Assistant: ",
+                           input={"prompt": f"{string_dialogue} {prompt_input}",
                                   "temperature":temperature, "top_p":top_p, "max_length":max_length, "repetition_penalty":1})
     return output
 
@@ -162,3 +167,4 @@ if st.session_state.messages[-1]["role"] != "assistant":
             placeholder.markdown(full_response)
     message = {"role": "assistant", "content": full_response}
     st.session_state.messages.append(message)
+    
